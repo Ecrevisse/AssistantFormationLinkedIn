@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import json
 import streamlit as st
 import os
+from PIL import Image
 
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
@@ -89,13 +90,18 @@ st.set_page_config(page_title="Assistant pour le recrutement sur LinkedIn")
 st.markdown(
     """
 <style>.element-container:has(#button-after) + div button {
- height: 150px;
+    height: 150px;
     padding-top: 10px !important;
     padding-bottom: 10px !important;
+    backgroundColor: #573666;
+    textColor: #ffffff;
  }</style>""",
     unsafe_allow_html=True,
 )
 
+img_col0, img_col1 = st.columns(2)
+img_col0.image(Image.open("static/TOMORROW_MORNING_TRANSPARENT-PhotoRoom.png"))
+img_col1.image(Image.open("static/groupe-bpce-logos-idCHAGU1zo.png"))
 st.title("Assistant pour le recrutement sur LinkedIn")
 
 st.write("Please upload your PDF file below.")
@@ -104,6 +110,7 @@ file = st.file_uploader("Upload a pdf", type="pdf")
 if file is not None and "agent" not in st.session_state:
     file_path = prepare_file(file)
     st.session_state.agent = rag_tool_openai(file_path)
+    # st.rerun()
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
@@ -111,7 +118,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
-if "start" not in st.session_state:
+if "agent" in st.session_state and "start" not in st.session_state:
     cols = st.columns(int(len(questions) / 2))
     for i, question in enumerate(questions):
         if cols[int(i / 2)].button(question):
@@ -126,17 +133,20 @@ if "start" not in st.session_state:
 
 response = ""
 # React to user input
-if prompt := st.chat_input("What is up?"):
-    # Display user message in chat message container
-    with st.chat_message("user"):
-        st.markdown(prompt)
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    response = st.session_state.agent({"input": prompt})["output"]
+if "agent" in st.session_state:
+    if prompt := st.chat_input("Encore une question ?"):
+        # Display user message in chat message container
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        response = st.session_state.agent({"input": prompt})["output"]
 
 # Display assistant response in chat message container
-with st.chat_message("assistant"):
-    st.markdown(response)
+if "agent" in st.session_state:
+    with st.chat_message("assistant"):
+        st.markdown(response)
+
 # Add assistant response to chat history
 if response:
     st.session_state.messages.append({"role": "assistant", "content": response})
