@@ -110,7 +110,6 @@ file = st.file_uploader("Upload a pdf", type="pdf")
 if file is not None and "agent" not in st.session_state:
     file_path = prepare_file(file)
     st.session_state.agent = rag_tool_openai(file_path)
-    # st.rerun()
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
@@ -130,6 +129,7 @@ if "agent" in st.session_state and "start" not in st.session_state:
             with st.chat_message("assistant"):
                 st.markdown(response)
             st.session_state.messages.append({"role": "assistant", "content": response})
+            st.rerun()
 
 response = ""
 # React to user input
