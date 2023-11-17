@@ -85,6 +85,17 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 st.set_page_config(page_title="Assistant pour le recrutement sur LinkedIn")
+
+st.markdown(
+    """
+<style>.element-container:has(#button-after) + div button {
+ height: 150px;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+ }</style>""",
+    unsafe_allow_html=True,
+)
+
 st.title("Assistant pour le recrutement sur LinkedIn")
 
 st.write("Please upload your PDF file below.")
@@ -99,21 +110,7 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-
-st.markdown(
-    """
-<style>
-button {
-    height: 150px;
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-}
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
-
+st.markdown('<span id="button-after"></span>', unsafe_allow_html=True)
 if "start" not in st.session_state:
     cols = st.columns(int(len(questions) / 2))
     for i, question in enumerate(questions):
