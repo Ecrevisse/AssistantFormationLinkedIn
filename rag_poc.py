@@ -13,7 +13,7 @@ from langchain.callbacks.base import BaseCallbackHandler, BaseCallbackManager
 from langchain.schema import LLMResult
 from langchain.schema.messages import SystemMessage
 
-from langchain.document_loaders import PyPDFLoader
+from langchain.document_loaders import PyPDFLoader, OnlinePDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
@@ -93,7 +93,6 @@ file = st.file_uploader("Upload a pdf", type="pdf")
 if file is not None and "agent" not in st.session_state:
     file_path = prepare_file(file)
     st.session_state.agent = rag_tool_openai(file_path)
-
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
