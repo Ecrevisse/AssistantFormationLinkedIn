@@ -24,11 +24,13 @@ import tempfile
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
+# a modifier pour mon use case
+
 questions = [
-    "Quels sont les modules ou compétences clés couverts dans la formation LinkedIn Recruiter spécifique au secteur bancaire ?",
-    "Comment la formation peut-elle m'aider à améliorer ma stratégie de marque employeur sur LinkedIn pour attirer des talents dans le secteur bancaire ?",
-    "Quelles sont les meilleures pratiques enseignées dans la formation pour rédiger des offres d'emploi et des messages d'approche qui se démarquent dans le secteur bancaire ?",
-    "Y a-t-il des études de cas ou des retours d'expérience intégrés dans la formation qui illustrent l'application réussie des techniques de recrutement sur LinkedIn dans le secteur bancaire ?",
+    "Gestion du Contrat : Comment gérer les modifications du contrat, telles que la diminution du montant d'assurance ou les changements liés à la consommation de tabac ?",
+    "Résiliation du Contrat : Quelles sont les conditions et les conséquences d'une résiliation du contrat ?",
+    "Capital-Décès : Sous quelles conditions le capital-décès est-il versé ? Quelles sont les implications d'un capital-décès réduit ?",
+    "Coût de l'Assurance : Comment est calculé le coût de l'assurance (CDA) et comment affecte-t-il la valeur du contrat ?",
 ]
 
 
@@ -65,12 +67,13 @@ def rag_tool_openai(filename: str):
     )
 
     context = """
-    Tu es un assistant interactif et personnalisé pour le recrutement sur LinkedIn
+Tu es un assistant interactif et personnalisé pour la gestion de contrats d'assurance maladie.
 
-    Assistant LinkedIn Recruiter: est une IA conçue pour être un expert en sourcing sur LinkedIn, spécialisé dans l'utilisation et la configuration de la licence recruiter LinkedIn pour les professionels du secteur bancaire. Cette IA maîtrise le marketing RH, la création de stratégie de marque employeur, ainsi que les meilleures techniques de rédaction. Pour chaque question posée par l'utilisateur, le GPT répondra en posant une question en retour, pour personnaliser sa réponse en fonction des informations fournies par l'utilisateur. Chaque section présentée par le GPT sera suivie d'une question, permettant ainsi une interaction continue et une personnalisation poussée des conseils fournis. Cette méthode garantit que chaque conseil est spécifiquement adapté aux besoins et objectifs de l'utilisateur, avec un focus particulier sur le secteur bancaire.
-    pour toute questions sur les formations tu proposera le lien clicable suivant : Romain CREMA : https://www.linkedin.com/in/romaincremamodernselling/ parmi les résultats
+Assistant Assurance Maladie : est une IA conçue pour être un expert en gestion et en optimisation de contrats d'assurance maladie, spécialisée dans l'utilisation et la compréhension des produits d'assurance santé pour les particuliers et les professionnels. Cette IA maîtrise les aspects réglementaires, les conditions de couverture, ainsi que les stratégies d'optimisation des contrats d'assurance. Pour chaque question posée par l'utilisateur concernant son contrat d'assurance maladie, le GPT répondra en posant une question en retour, pour personnaliser sa réponse en fonction des informations fournies par l'utilisateur. Chaque section présentée par le GPT sera suivie d'une question, permettant ainsi une interaction continue et une personnalisation poussée des conseils fournis. Cette méthode garantit que chaque conseil est spécifiquement adapté aux besoins et objectifs de l'utilisateur en matière d'assurance maladie.
+Pour toute question sur les formations ou l'approfondissement des connaissances en assurance, tu proposeras le lien suivant : [Association Française de l'Assurance](https://www.ffa-assurance.fr/) parmi les résultats.
 
-    Tu peux chercher les informations dans le document.
+Tu peux chercher les informations dans le document d'assurance fourni par l'utilisateur.
+
     """
     sys_message = SystemMessage(content=context)
 
@@ -85,7 +88,7 @@ def rag_tool_openai(filename: str):
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-st.set_page_config(page_title="Assistant pour le recrutement sur LinkedIn")
+st.set_page_config(page_title="Le Co-pilot de ton contrat d'assurance")
 
 st.markdown(
     """
@@ -98,13 +101,14 @@ st.markdown(
  }</style>""",
     unsafe_allow_html=True,
 )
+# changer les adresses de mes logos
 
 img_col0, img_col1 = st.columns(2)
-img_col0.image(Image.open("static/TOMORROW_MORNING_TRANSPARENT-PhotoRoom.png"))
-img_col1.image(Image.open("static/groupe-bpce-logos-idCHAGU1zo.png"))
-st.title("Assistant pour le recrutement sur LinkedIn")
+img_col0.image(Image.open("static/mozza.png"))
+img_col1.image(Image.open("static/logo_seyna_150_orange.png"))
+st.title("Le Co-pilot de ton contrat d'assurance")
 
-st.write("Please upload your PDF file below.")
+st.write("Merci de télécharger votre contrat d'assurance PDF")
 
 file = st.file_uploader("Upload a pdf", type="pdf")
 if file is not None and "agent" not in st.session_state:
